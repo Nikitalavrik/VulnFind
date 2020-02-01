@@ -28,12 +28,33 @@ def print_scan_info(nm, ip):
             nm[ip][protocol][port]['name'], nm[ip][protocol][port]['product'],
             nm[ip][protocol][port]['version']))
 
+def exploit_db(href):
+    url = href[7:href.find("&")]
+    print(url)
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0',
+        'referrer': 'https://google.com',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Pragma': 'no-cache',
+    }
+    page = requests.get(url, headers=headers)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    print(soup.find_all("h1", {"class" : "card-title"})[0].text.strip())
+
 def srcap_vuln_info(name, product, version):
     vuln_db = "exploit-db"
     page = requests.get('https://www.google.com/search?q='+
-                name + product + version + "vulnerability")
+                 " " + name + " " + product + " " + version + " vulnerability")
+    print('https://www.google.com/search?q='+
+                 " " + name + " " + product + " " + version + " vulnerability")
     soup = BeautifulSoup(page.content, 'html.parser')
-    print(soup)
+    links = soup.find_all("a")
+    for link in links:
+        if vuln_db in link.get("href"):
+            exploit_db(link.get("href"))
+    # print(soup.find_all("a")[0].get("href"))
 
 def look_up_ports(nm, ip):
     for protocol in nm[ip].all_protocols():
