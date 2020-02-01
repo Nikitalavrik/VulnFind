@@ -2,6 +2,7 @@ import nmap
 import sys
 import requests
 from bs4 import BeautifulSoup
+from vuln_class import Vuln
 
 def parse_input():
     if len(sys.argv) > 1:
@@ -29,8 +30,9 @@ def print_scan_info(nm, ip):
             nm[ip][protocol][port]['version']))
 
 def exploit_db(href):
+    exp_url = "www.exploit-db.com"
     url = href[7:href.find("&")]
-    print(url)
+    # print(url)
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0',
         'referrer': 'https://google.com',
@@ -41,19 +43,34 @@ def exploit_db(href):
     }
     page = requests.get(url, headers=headers)
     soup = BeautifulSoup(page.content, 'html.parser')
-    print(soup.find_all("h1", {"class" : "card-title"})[0].text.strip())
+    name = soup.find_all("h1", {"class" : "card-title"})[0].text.strip()
+    cve = soup.find_all("h6", {"class" : "stats-title"})[1].text.strip()
+    cve_url = soup.find_all("h6")[1].find("a").get("href")
+    verf = soup.find_all("i", {"class" : "mdi-check"})[0].get("style") == "color: #96b365"
+    exploit = exp_url + soup.find_all("a", {"title" : "View Raw"})[0].get("href")
+    tp = soup.find_all("h6", {"class" : "stats-title"})[3].text.strip()
+    return Vuln(name, href, cve, cve_url, exploit, tp, verf)
+
+def cve_details(href):
+    url = href[7:href.find("&")]
+    print(url)
 
 def srcap_vuln_info(name, product, version):
-    vuln_db = "exploit-db"
+    exp_db = "www.exploit-db.com"
+    cve_det = "cvedetails"
     page = requests.get('https://www.google.com/search?q='+
                  " " + name + " " + product + " " + version + " vulnerability")
-    print('https://www.google.com/search?q='+
-                 " " + name + " " + product + " " + version + " vulnerability")
+    # print('https://www.google.com/search?q='+
+    #              " " + name + " " + product + " " + version + " vulnerability")
     soup = BeautifulSoup(page.content, 'html.parser')
     links = soup.find_all("a")
+    vulns = []
     for link in links:
-        if vuln_db in link.get("href"):
-            exploit_db(link.get("href"))
+        href = link.get("href")
+        if exp_db in href:
+            vulns.append(exploit_db(href))
+        if cve_det in href:
+            vulns.append(cve_details(href))
     # print(soup.find_all("a")[0].get("href"))
 
 def look_up_ports(nm, ip):
