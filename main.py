@@ -1,6 +1,7 @@
 import nmap
 import sys
 import requests
+import urllib3
 from bs4 import BeautifulSoup
 from vuln_class import Vuln
 
@@ -32,7 +33,7 @@ def print_scan_info(nm, ip):
 def exploit_db(href):
     exp_url = "www.exploit-db.com"
     url = href[7:href.find("&")]
-    # print(url)
+    print(url)
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0',
         'referrer': 'https://google.com',
@@ -44,16 +45,41 @@ def exploit_db(href):
     page = requests.get(url, headers=headers)
     soup = BeautifulSoup(page.content, 'html.parser')
     name = soup.find_all("h1", {"class" : "card-title"})[0].text.strip()
-    cve = soup.find_all("h6", {"class" : "stats-title"})[1].text.strip()
+    cve = "CVE-" +soup.find_all("h6", {"class" : "stats-title"})[1].text.strip()
     cve_url = soup.find_all("h6")[1].find("a").get("href")
-    verf = soup.find_all("i", {"class" : "mdi-check"})[0].get("style") == "color: #96b365"
+    verf = 1 if soup.find_all("i", {"class" : "mdi-check"}) else 0
     exploit = exp_url + soup.find_all("a", {"title" : "View Raw"})[0].get("href")
     tp = soup.find_all("h6", {"class" : "stats-title"})[3].text.strip()
     return Vuln(name, href, cve, cve_url, exploit, tp, verf)
 
 def cve_details(href):
+    exp_db = "www.exploit-db.com"
     url = href[7:href.find("&")]
     print(url)
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0',
+        'referrer': 'https://google.com',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Pragma': 'no-cache',
+    }
+    vulns = []
+    http = urllib3.PoolManager()
+    page = http.request('GET', url)
+    soup = BeautifulSoup(page.data, 'html.parser')
+    tr = soup.find_all("tr", {"class" : "srrowns"})
+    descr = soup.find_all("td", {"class" : "cvesummarylong"})
+    len_descr = len(descr)
+    min_descr = len_descr if len_descr < 3 else 3 
+    for i in range(min_descr):
+        name = descr[i].text.strip()
+        cve = tr[i].find_all("a")[1].text
+        cve_url = exp_db + "/cve/" + cve
+        tp = tr[i].find_all("td")[9]
+        vulns.append(Vuln(name, cve_url, cve, cve_url, tp=tp))
+    return (vulns)
+    
 
 def srcap_vuln_info(name, product, version):
     exp_db = "www.exploit-db.com"
@@ -70,17 +96,23 @@ def srcap_vuln_info(name, product, version):
         if exp_db in href:
             vulns.append(exploit_db(href))
         if cve_det in href:
-            vulns.append(cve_details(href))
-    # print(soup.find_all("a")[0].get("href"))
+            vulns += cve_details(href)
+    return vulns
 
 def look_up_ports(nm, ip):
+    vulns = dict()
+    products = []
     for protocol in nm[ip].all_protocols():
         all_ports = list(nm[ip][protocol].keys())
-        srcap_vuln_info(nm[ip][protocol][all_ports[0]]['name'],
-                        nm[ip][protocol][all_ports[0]]['product'],
-                        nm[ip][protocol][all_ports[0]]['version'])
+        for port in all_ports:
+            if (nm[ip][protocol][port]['name'] != "unknown"\
+                and nm[ip][protocol][port]['name'] not in products):
+                vulns[port] = srcap_vuln_info(nm[ip][protocol][port]['name'],
+                            nm[ip][protocol][port]['product'],
+                            nm[ip][protocol][port]['version'])
+                products.append(nm[ip][protocol][port]['name'])
 
-
+    print(vulns)
 ip, port_range = parse_input()
 
 nm = nmap.PortScanner()

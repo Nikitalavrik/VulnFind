@@ -9,3 +9,9 @@ class   Vuln:
         self.url = url
         self.cve_url = cve_url
         self.exploit = exploit
+    
+    def __str__(self):
+        return str(self.cve)
+
+    def __repr__(self):
+        return str(self.cve)
