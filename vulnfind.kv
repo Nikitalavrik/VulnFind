@@ -1,0 +1,30 @@
+#:kivy 1.11.1
+
+<VulnFind>:
+    target_scan: target_scan
+    btn_scan: btn_scan
+    port_range: port_range
+
+    TextInput:
+        id: target_scan
+        hint_text: "127.0.0.1"
+        size_hint: 0.18, 0.05
+        pos_hint: {"center_x" : 0.35, "center_y" : 0.9}
+
+    Label:
+        font_size : 20
+        text : ":"
+        pos_hint: {"center_x" : 0.45, "center_y" : 0.9}
+
+    TextInput:
+        id: port_range
+        hint_text: "1-65535"
+        size_hint: 0.09, 0.05
+        pos_hint: {"center_x" : 0.51, "center_y" : 0.9}
+    
+    Button:
+        id: btn_scan
+        text: "Scan"
+        size_hint: 0.18, 0.06
+        on_press: root.scan(btn_scan)
+        pos_hint: {"center_x" : 0.7, "center_y" : 0.9}

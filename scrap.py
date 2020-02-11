@@ -1,6 +1,7 @@
 import nmap
 import sys
 import requests
+import socket
 import urllib3
 from bs4 import BeautifulSoup
 from vuln_class import Vuln
@@ -113,10 +114,41 @@ def look_up_ports(nm, ip):
                 products.append(nm[ip][protocol][port]['name'])
 
     print(vulns)
-ip, port_range = parse_input()
 
-nm = nmap.PortScanner()
-nm.scan(ip, port_range)
+def legal_ip(ip):
 
-print_scan_info(nm, ip)
-look_up_ports(nm, ip)
+    try:
+        socket.inet_aton(ip)
+        return True
+    except socket.error:
+        return False
+
+def check_port(port):
+    return (port < 0 or port > 65535)
+
+def parse_kivy(ip, port_range):
+
+    if (not legal_ip(ip)):
+        ip = "127.0.0.1"
+    if (not port_range):
+        port_range = "1-65535"
+    else:
+        split_port = port_range.split('-')
+        if (check_port(int(split_port[0]))):
+            split_port = "1"
+        if (len(split_port) == 2):
+            if (check_port(int(split_port[1]))):
+                split_port = "65535"
+            port_range = str(split_port[0]) + '-' + str(split_port[1])  
+    return ip, port_range
+
+def start_scan(ip, port_range):
+
+    # ip, port_range = parse_input()
+    ip, port_range = parse_kivy(ip, port_range)
+
+    nm = nmap.PortScanner()
+    nm.scan(ip, port_range)
+
+    print_scan_info(nm, ip)
+    look_up_ports(nm, ip)
