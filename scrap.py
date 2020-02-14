@@ -18,6 +18,17 @@ def parse_input():
     print("ip : %s port_range : %s" % (ip, port_range))
     return ip, port_range
 
+def out_scan_info(nm, ip):
+    ports = []
+    for protocol in nm[ip].all_protocols():
+        all_ports = list(nm[ip][protocol].keys())
+        all_ports.sort()
+        for port in all_ports:
+            ports.append([port, nm[ip][protocol][port]['state'],
+            nm[ip][protocol][port]['name'], nm[ip][protocol][port]['product'],
+            nm[ip][protocol][port]['version']])
+    return ports
+
 def print_scan_info(nm, ip):
     print("Hostname : %s" % (nm[ip].hostname()))
     for protocol in nm[ip].all_protocols():
@@ -141,6 +152,14 @@ def parse_kivy(ip, port_range):
                 split_port = "65535"
             port_range = str(split_port[0]) + '-' + str(split_port[1])  
     return ip, port_range
+
+def np_scan(ip, port_range):
+
+    ip, port_range = parse_kivy(ip, port_range)
+    nm = nmap.PortScanner()
+    nm.scan(ip, port_range)
+
+    return out_scan_info(nm, ip)
 
 def start_scan(ip, port_range):
 

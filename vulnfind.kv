@@ -1,10 +1,22 @@
 #:kivy 1.11.1
 
+<ButtonGrid>:
+
 <VulnFind>:
     target_scan: target_scan
     btn_scan: btn_scan
+    scan_box: scan_box
     port_range: port_range
+    grid_scan : grid_scan
 
+    FloatLayout:
+        canvas:
+            Color:
+                rgb: root.convert_rgb(34, 40, 49)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    
     TextInput:
         id: target_scan
         hint_text: "127.0.0.1"
@@ -14,13 +26,13 @@
     Label:
         font_size : 20
         text : ":"
-        pos_hint: {"center_x" : 0.45, "center_y" : 0.9}
+        pos_hint: {"center_x" : 0.455, "center_y" : 0.9}
 
     TextInput:
         id: port_range
         hint_text: "1-65535"
-        size_hint: 0.09, 0.05
-        pos_hint: {"center_x" : 0.51, "center_y" : 0.9}
+        size_hint: 0.1, 0.05
+        pos_hint: {"center_x" : 0.52, "center_y" : 0.9}
     
     Button:
         id: btn_scan
@@ -28,3 +40,46 @@
         size_hint: 0.18, 0.06
         on_press: root.scan(btn_scan)
         pos_hint: {"center_x" : 0.7, "center_y" : 0.9}
+    
+
+
+    FloatLayout:
+        id: scan_box
+        size_hint: 0.9, 0.7
+        pos_hint: {"center_x" : 0.5, "center_y" : 0.47}
+        canvas.before:
+            Color:
+                rgb: root.convert_rgb(238, 238, 238)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        GridLayout:
+            cols: 5
+            padding: 50, 0
+            pos_hint: {"top" : 1.4}
+            Label:
+                text: 'Port'
+                color: root.convert_rgb(34, 40, 49)
+            Label:
+                text: 'State'
+                color: root.convert_rgb(34, 40, 49)
+            Label:
+                text: 'Name'
+                color: root.convert_rgb(34, 40, 49)
+            Label:
+                text: 'Product'
+                color: root.convert_rgb(34, 40, 49)
+            Label:
+                text: 'Version'
+                color: root.convert_rgb(34, 40, 49)
+
+        GridLayout:
+            id: grid_scan
+            cols: 1
+            padding: 50, 0
+            top: self.height
+            # size_hint_y: None
+            height: self.minimum_height
+            row_default_height: '35dp'
+            row_force_default: True
+            
