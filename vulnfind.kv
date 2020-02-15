@@ -19,6 +19,8 @@
     btn_vuln: btn_vuln
     btn_about: btn_about
     port_top: port_top
+    vuln_top: vuln_top
+    grid_find: grid_find
 
     FloatLayout:
         canvas:
@@ -105,9 +107,38 @@
                 color: 0.13, 0.16, 0.19, 1
 
         GridLayout:
+            id: vuln_top
+            cols: 5
+            padding: 50, 0
+            opacity: 0
+            size_hint_x: 1.11
+            pos_hint: {"top" : 1.4}
+            Label:
+                text: 'Port/Product'
+                color: 0.13, 0.16, 0.19, 1
+            Label:
+                text: 'CVE'
+                color: 0.13, 0.16, 0.19, 1
+            Label:
+                text: 'Type'
+                color: 0.13, 0.16, 0.19, 1
+            Label:
+                text: 'Description'
+                color: 0.13, 0.16, 0.19, 1
+
+        GridLayout:
+            id: grid_find
+            cols: 1        
+            padding: 40, 0
+            top: self.height
+            size_hint_x: 1.11
+            height: self.minimum_height
+            row_default_height: '45dp'
+            row_force_default: True
+
+        GridLayout:
             id: grid_scan
-            cols: 1
-            visible: 
+            cols: 1        
             padding: 40, 0
             top: self.height
             size_hint_x: 1.11

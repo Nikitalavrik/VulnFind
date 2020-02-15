@@ -88,7 +88,7 @@ def cve_details(href):
         name = descr[i].text.strip()
         cve = tr[i].find_all("a")[1].text
         cve_url = exp_db + "/cve/" + cve
-        tp = tr[i].find_all("td")[9]
+        tp = tr[i].find_all("td")[9].text.strip()
         vulns.append(Vuln(name, cve_url, cve, cve_url, tp=tp))
     return (vulns)
     
