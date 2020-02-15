@@ -1,18 +1,29 @@
 #:kivy 1.11.1
 
 <ButtonGrid>:
+    color: 0.93, 0.93, 0.93, 1
+    canvas.before:
+        Color:
+            rgb: self.color
+        Rectangle:
+            size: self.size
+            pos: self.pos
 
 <VulnFind>:
     target_scan: target_scan
     btn_scan: btn_scan
     scan_box: scan_box
     port_range: port_range
-    grid_scan : grid_scan
+    grid_scan: grid_scan
+    btn_port: btn_port
+    btn_vuln: btn_vuln
+    btn_about: btn_about
+    port_top: port_top
 
     FloatLayout:
         canvas:
             Color:
-                rgb: root.convert_rgb(34, 40, 49)
+                rgb: 0.13, 0.16, 0.19, 1
             Rectangle:
                 size: self.size
                 pos: self.pos
@@ -49,37 +60,65 @@
         pos_hint: {"center_x" : 0.5, "center_y" : 0.47}
         canvas.before:
             Color:
-                rgb: root.convert_rgb(238, 238, 238)
+                rgb: 0.93, 0.93, 0.93, 1
             Rectangle:
                 size: self.size
                 pos: self.pos
+        RelativeLayout:
+            GridLayout:
+                cols: 3
+                rows: 1
+                size_hint: 1.005, 0.05
+                pos_hint: {"center_x" : 0.5545, "center_y" : 1.15}
+                Button:
+                    id: btn_port
+                    text: "Ports"
+                    on_press: root.port_info(btn_port)
+                Button:
+                    id: btn_vuln
+                    text: "Vulnerabilities"
+                    on_press: root.vuln_info(btn_vuln)
+                Button:
+                    id: btn_about
+                    text: "About"
+                    on_press: root.about_info(btn_about)
         GridLayout:
+            id: port_top
             cols: 5
             padding: 50, 0
+            size_hint_x: 1.11
             pos_hint: {"top" : 1.4}
             Label:
                 text: 'Port'
-                color: root.convert_rgb(34, 40, 49)
+                color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'State'
-                color: root.convert_rgb(34, 40, 49)
+                color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'Name'
-                color: root.convert_rgb(34, 40, 49)
+                color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'Product'
-                color: root.convert_rgb(34, 40, 49)
+                color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'Version'
-                color: root.convert_rgb(34, 40, 49)
+                color: 0.13, 0.16, 0.19, 1
 
         GridLayout:
             id: grid_scan
             cols: 1
-            padding: 50, 0
+            visible: 
+            padding: 40, 0
             top: self.height
-            # size_hint_y: None
+            size_hint_x: 1.11
             height: self.minimum_height
             row_default_height: '35dp'
             row_force_default: True
-            
+    
+    Button:
+        id: btn_find
+        text: "Find Exploit"
+        size_hint: 0.16, 0.07
+        pos_hint: {"center_x" : 0.5, "center_y" : 0.06}
+        on_press: root.find_vuln(btn_find)
+

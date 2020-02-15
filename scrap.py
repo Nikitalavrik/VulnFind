@@ -159,7 +159,7 @@ def np_scan(ip, port_range):
     nm = nmap.PortScanner()
     nm.scan(ip, port_range)
 
-    return out_scan_info(nm, ip)
+    return ip, nm, out_scan_info(nm, ip)
 
 def start_scan(ip, port_range):
 
