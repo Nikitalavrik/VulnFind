@@ -4,10 +4,10 @@ class   Vuln:
                             exploit=None, tp=None, verf=None):
         self.name = name
         self.cve = cve
+        self.cve_url = cve_url
         self.type = tp
         self.verf = verf
         self.url = url
-        self.cve_url = cve_url
         self.exploit = exploit
     
     def __str__(self):

@@ -21,6 +21,8 @@
     port_top: port_top
     vuln_top: vuln_top
     grid_find: grid_find
+    btn_more_info: btn_more_info
+    btn_find: btn_find
 
     FloatLayout:
         canvas:
@@ -152,4 +154,12 @@
         size_hint: 0.16, 0.07
         pos_hint: {"center_x" : 0.5, "center_y" : 0.06}
         on_press: root.find_vuln(btn_find)
+    
+    Button:
+        id: btn_more_info
+        text: "More Info"
+        opacity: 0
+        size_hint: 0.0, 0.07
+        pos_hint: {"center_x" : 0.5, "center_y" : 0.06}
+        on_press: root.open_browser(btn_find)
 

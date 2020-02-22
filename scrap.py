@@ -62,10 +62,11 @@ def exploit_db(href):
     verf = 1 if soup.find_all("i", {"class" : "mdi-check"}) else 0
     exploit = exp_url + soup.find_all("a", {"title" : "View Raw"})[0].get("href")
     tp = soup.find_all("h6", {"class" : "stats-title"})[3].text.strip()
-    return Vuln(name, href, cve, cve_url, exploit, tp, verf)
+    return Vuln(name=name, cve=cve, cve_url=cve_url,
+    exploit=exploit, tp=tp, verf=verf, url=url)
 
 def cve_details(href):
-    exp_db = "www.exploit-db.com"
+    exp_db = "www.cvedetails.com"
     url = href[7:href.find("&")]
     print(url)
     headers = {
@@ -89,7 +90,7 @@ def cve_details(href):
         cve = tr[i].find_all("a")[1].text
         cve_url = exp_db + "/cve/" + cve
         tp = tr[i].find_all("td")[9].text.strip()
-        vulns.append(Vuln(name, cve_url, cve, cve_url, tp=tp))
+        vulns.append(Vuln(name=name, cve_url=cve_url, cve=cve, url="http://" + cve_url, tp=tp))
     return (vulns)
     
 
