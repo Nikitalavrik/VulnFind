@@ -86,11 +86,12 @@ def cve_details(href):
     len_descr = len(descr)
     min_descr = len_descr if len_descr < 3 else 3 
     for i in range(min_descr):
+        score = tr[i].find_all("div", {"class" : "cvssbox"})[0].text.strip()
         name = descr[i].text.strip()
         cve = tr[i].find_all("a")[1].text
         cve_url = exp_db + "/cve/" + cve
         tp = tr[i].find_all("td")[9].text.strip()
-        vulns.append(Vuln(name=name, cve_url=cve_url, cve=cve, url="http://" + cve_url, tp=tp))
+        vulns.append(Vuln(name=name, cve_url=cve_url, cve=cve, url="http://" + cve_url, tp=tp,score=score))
     return (vulns)
     
 

@@ -94,12 +94,11 @@ class   VulnFind(FloatLayout):
         self.clear_all_scan(self.grid_find)
         self.grid_find.rows = 0
         for vuln in (vulns.values()):
-            print(vuln)
             self.grid_find.rows += len(vuln)
         #print(self.grid_find.rows)
         for key in vulns:
             for cve in vulns[key]:
-                tmp_grid = ButtonGrid(cols=4, rows=1)
+                tmp_grid = ButtonGrid(cols=5, rows=1)
                 tmp_grid.row_id = cve
                 tmp_grid.vuln = cve
                 l1 = Label(text=str(key),
@@ -108,9 +107,12 @@ class   VulnFind(FloatLayout):
                 color=self.convert_rgb(34, 40, 49))
                 l3 = Label(text=str(cve.type),
                 color=self.convert_rgb(34, 40, 49))
+                l4 = Label(text=str(cve.score),
+                color=self.convert_rgb(34, 40, 49))
+                print(cve.score)
                 show_descp = str(cve.name).strip()
                 show_descp = show_descp[0:35] + "..." if len(show_descp) > 35 else show_descp
-                l4 = Label(text=show_descp,
+                l5 = Label(text=show_descp,
                 color=self.convert_rgb(34, 40, 49),
                 font_size=10)
                 #l4.texture_size = l3.size[0] + 100, 40
@@ -119,6 +121,7 @@ class   VulnFind(FloatLayout):
                 tmp_grid.add_widget(l2)
                 tmp_grid.add_widget(l3)
                 tmp_grid.add_widget(l4)
+                tmp_grid.add_widget(l5)
                 self.grid_find.add_widget(tmp_grid)
         self.clear_widgets()
         self.vuln_top.opacity = 1

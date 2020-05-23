@@ -68,6 +68,7 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
+
         RelativeLayout:
             GridLayout:
                 cols: 3
@@ -110,7 +111,7 @@
 
         GridLayout:
             id: vuln_top
-            cols: 5
+            cols: 6
             padding: 50, 0
             opacity: 0
             size_hint_x: 1.11
@@ -123,6 +124,9 @@
                 color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'Type'
+                color: 0.13, 0.16, 0.19, 1
+            Label:
+                text: 'Score'
                 color: 0.13, 0.16, 0.19, 1
             Label:
                 text: 'Description'
